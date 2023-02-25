@@ -721,6 +721,20 @@ sprites.onOverlap(SpriteKind.Monster, SpriteKind.Player, function (sprite, other
         otherSprite.follow(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Four)))
     }
 })
+mp.onControllerEvent(ControllerEvent.Disconnected, function (player2) {
+    if (player2 == mp.playerSelector(mp.PlayerNumber.One)) {
+        game.setGameOverMessage(false, "Host Disconected")
+    } else if (player2 == mp.playerSelector(mp.PlayerNumber.Two)) {
+        sprites.destroy(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Two)))
+        info.changeLifeBy(-1)
+    } else if (player2 == mp.playerSelector(mp.PlayerNumber.Three)) {
+        sprites.destroy(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Three)))
+        info.changeLifeBy(-1)
+    } else if (player2 == mp.playerSelector(mp.PlayerNumber.Four)) {
+        sprites.destroy(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Four)))
+        info.changeLifeBy(-1)
+    }
+})
 mp.onButtonEvent(mp.MultiplayerButton.A, ControllerButtonEvent.Pressed, function (player2) {
     if (mp.isButtonPressed(mp.playerSelector(mp.PlayerNumber.One), mp.MultiplayerButton.A)) {
         projectile = sprites.createProjectileFromSprite(img`
@@ -935,7 +949,8 @@ function Boot () {
         `, SpriteKind.Player))
     mp.moveWithButtons(mp.playerSelector(mp.PlayerNumber.Three))
     tiles.setCurrentTilemap(tilemap`level1`)
-    statusbar = statusbars.create(20, 4, StatusBarKind.Health)
+    statusbar = statusbars.create(30, 4, StatusBarKind.Health)
+    tiles.placeOnTile(statusbar, tiles.getTileLocation(7, 1))
     scene.cameraFollowSprite(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.One)))
     tiles.placeOnRandomTile(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.One)), assets.tile`myTile13`)
     tiles.placeOnRandomTile(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Two)), assets.tile`myTile13`)
@@ -1304,15 +1319,16 @@ function INGAMEUI () {
         `, SpriteKind.UI)
     Powerup.setPosition(149, 109)
     Powerup.setFlag(SpriteFlag.RelativeToCamera, true)
+    info.setLife(4)
     spriteutils.setLifeImage(img`
+        . . 6 6 6 . . 
+        . 6 6 1 6 6 . 
+        . 6 1 1 1 6 . 
+        . 6 6 1 6 6 . 
+        . . 6 6 6 . . 
         . . . . . . . 
-        . . . . . . . 
-        . . . . . . . 
-        . . . . . . . 
-        . . . . . . . 
-        . . . . . . . 
-        . . . . . . . 
-        . . . . . . . 
+        . . 6 6 6 . . 
+        . 6 6 1 6 6 . 
         `)
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile2`, function (sprite, location) {
@@ -1587,9 +1603,6 @@ let Broken_Simulator: Sprite = null
 let statusbar: StatusBarSprite = null
 let projectile: Sprite = null
 Boot()
-game.onUpdate(function () {
-	
-})
 game.onUpdateInterval(1, function () {
 	
 })
